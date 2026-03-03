@@ -63,7 +63,12 @@ If logical content is held constant, does the order of constraints still change 
 - Sampling (`n=40` per permutation) shows large shifts in `P(salmon)` across permutations.
 - In the reference run, range `max(P(salmon)) - min(P(salmon)) = 0.50 (max 1.00, min 0.50)`.
 
-## Reproducible Setup (GH200 Recommended)
+# Takeaways
+
+- LLM secret declarations are reconstructed from transcript state.
+- Transcript constraint aggregation is path-dependent (order-sensitive), not purely order-invariant logical conjunction.
+
+## Reproducible Setup (>= 80GB Recommended)
 
 ### Fast path (recommended)
 
@@ -115,8 +120,3 @@ sudo systemctl start nvidia-persistenced
 sudo nvidia-smi -pm 1
 nvidia-smi
 ```
-
-## Takeaways
-
-- LLM secret declarations are reconstructed from transcript state.
-- Transcript constraint aggregation is path-dependent (order-sensitive), not purely order-invariant logical conjunction.
