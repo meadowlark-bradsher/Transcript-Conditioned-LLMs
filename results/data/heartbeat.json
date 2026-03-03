@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "timestamp": "2026-03-03T14:11:00.075793+00:00",
+  "run_counter": 246,
+  "total_runs": 246,
+  "progress": 1.0,
+  "last_run_id": "sample_p05_r039",
+  "decode_mode": "sample",
+  "perm_id": 5,
+  "rep": 39
+}

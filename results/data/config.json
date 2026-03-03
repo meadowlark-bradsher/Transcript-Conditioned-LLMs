@@ -1,0 +1,132 @@
+{
+  "experiment_name": "transcript_ordering_effect",
+  "animals": [
+    "cat",
+    "dog",
+    "eagle",
+    "salmon",
+    "shark"
+  ],
+  "target_pair": {
+    "A": "salmon",
+    "B": "shark"
+  },
+  "qa_triplet": [
+    {
+      "feature": "mammal",
+      "answer": false
+    },
+    {
+      "feature": "flies",
+      "answer": false
+    },
+    {
+      "feature": "swims",
+      "answer": true
+    }
+  ],
+  "permutations": [
+    {
+      "perm_id": 0,
+      "indices": [
+        0,
+        1,
+        2
+      ],
+      "feature_order": [
+        "mammal",
+        "flies",
+        "swims"
+      ]
+    },
+    {
+      "perm_id": 1,
+      "indices": [
+        0,
+        2,
+        1
+      ],
+      "feature_order": [
+        "mammal",
+        "swims",
+        "flies"
+      ]
+    },
+    {
+      "perm_id": 2,
+      "indices": [
+        1,
+        0,
+        2
+      ],
+      "feature_order": [
+        "flies",
+        "mammal",
+        "swims"
+      ]
+    },
+    {
+      "perm_id": 3,
+      "indices": [
+        1,
+        2,
+        0
+      ],
+      "feature_order": [
+        "flies",
+        "swims",
+        "mammal"
+      ]
+    },
+    {
+      "perm_id": 4,
+      "indices": [
+        2,
+        0,
+        1
+      ],
+      "feature_order": [
+        "swims",
+        "mammal",
+        "flies"
+      ]
+    },
+    {
+      "perm_id": 5,
+      "indices": [
+        2,
+        1,
+        0
+      ],
+      "feature_order": [
+        "swims",
+        "flies",
+        "mammal"
+      ]
+    }
+  ],
+  "n_reps": 40,
+  "decode": {
+    "sample": {
+      "do_sample": true,
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "max_new_tokens": 50
+    },
+    "greedy": {
+      "do_sample": false,
+      "temperature": 1.0,
+      "top_p": 1.0,
+      "max_new_tokens": 50
+    }
+  },
+  "primary_endpoint": "P(model_output == A | output in {A,B}) by permutation",
+  "stopping_rule": "none (fixed n)",
+  "output_files": {
+    "runs_csv": "transcript_ordering_results/runs.csv",
+    "runs_jsonl": "transcript_ordering_results/runs.jsonl",
+    "transcripts_json": "transcript_ordering_results/transcripts.json",
+    "config_json": "transcript_ordering_results/config.json",
+    "heartbeat_json": "transcript_ordering_results/heartbeat.json"
+  }
+}
