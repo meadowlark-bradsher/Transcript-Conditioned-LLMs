@@ -1,37 +1,51 @@
 # LLMs Don't Keep Secrets
 
-Controlled experiments on transcript-conditioned reasoning and transcript-order effects in LLMs.
+This project demonstrates, with controlled experiments, how LLM outputs depend on transcript text and transcript order.
 
-## Overview
+If you are new to the project, start with:
 
-This repo contains two experiments:
+1. [`transcript_conditioning_demo.ipynb`](transcript_conditioning_demo.ipynb)
+2. [`transcript_bubbles.html`](transcript_bubbles.html)
+3. this README section by section
 
-1. **Transcript reconstruction**: the model declares different secrets based only on transcript content.
-2. **Transcript ordering effect**: with the same logical feasible set, changing Q/A order changes model outputs.
+## Why This Repo Exists
 
-Primary notebook: [`transcript_conditioning_demo.ipynb`](transcript_conditioning_demo.ipynb)
+Many people talk about models "keeping a secret" in multi-turn games. This repo tests that idea directly in a toy 20-questions domain.
 
-## Repo Contents
+Two core questions are tested:
 
-- [`transcript_conditioning_demo.ipynb`](transcript_conditioning_demo.ipynb): main notebook (legacy + ordering study).
-- [`transcript_conditioning_demo-executed.ipynb`](transcript_conditioning_demo-executed.ipynb): executed reference.
-- [`transcript_bubbles.html`](transcript_bubbles.html): visual walkthrough.
+1. If the model only sees a transcript, does it reconstruct the implied secret?
+2. If logical content is unchanged, can transcript order still change model outputs?
+
+## What You Will Find Here
+
+- [`transcript_conditioning_demo.ipynb`](transcript_conditioning_demo.ipynb): main notebook with both experiments.
+- [`transcript_conditioning_demo-executed.ipynb`](transcript_conditioning_demo-executed.ipynb): executed run for reference.
+- [`transcript_bubbles.html`](transcript_bubbles.html): interactive visual explanation.
 - [`scripts/setup_tc70_env.sh`](scripts/setup_tc70_env.sh): reproducible environment bootstrap.
-- [`spec.md`](spec.md), [`20q-spec.md`](20q-spec.md): task/domain specs.
+- [`spec.md`](spec.md), [`20q-spec.md`](20q-spec.md): task and toy-domain specs.
 
 ## Experiment 1: Transcript Reconstruction
 
-**Question**  
-Does a model keep a hidden committed secret, or infer the secret from the visible transcript?
+### The question
 
-**Design**
+When asked "What was your secret?" does the model reveal a hidden committed state, or infer from transcript evidence?
 
-- Secret space: 6 animals.
-- Each secret is an 8-feature binary vector.
-- One synthetic transcript per secret.
-- Model is not part of the original conversation; it only sees transcript text.
+### The setup
 
-**Reference result (Llama-3.1-70B-Instruct)**
+- 6 animal secrets.
+- Each secret has 8 binary features.
+- One synthetic Q/A transcript per secret.
+- The model is only given transcript text and the candidate secret list.
+
+### What to look for
+
+For each transcript:
+
+1. deterministic feasible-set checker says exactly one secret is valid.
+2. model output matches that implied secret.
+
+### Reference result (Llama-3.1-70B-Instruct)
 
 | Transcript implies | Model declared | Match |
 |---|---|---|
@@ -42,41 +56,43 @@ Does a model keep a hidden committed secret, or infer the secret from the visibl
 | shark | shark | ✓ |
 | crocodile | crocodile | ✓ |
 
-**Outcome**: 6/6 correct.  
-Contradictory transcript (no feasible secret) leads to conflict/error-style response, not a stable hidden secret reveal.
+The contradictory transcript (no feasible secret) yields a conflict/error-style response rather than a stable hidden-secret reveal.
 
 ## Experiment 2: Transcript Ordering Effect
 
-**Question**  
-If logical content is held constant, does the order of constraints still change predictions?
+### The question
 
-**Design**
+If the logical feasible set is the same, does ordering of evidence still matter?
+
+### The setup
 
 - Candidate list reduced to 5 animals.
-- Chosen transcript has feasible set exactly `{salmon, shark}`.
-- Use 3 Q/A constraints and test all `3! = 6` orderings.
-- Feasible set remains identical for all permutations.
+- Choose 3 Q/A constraints where feasible set is exactly `{salmon, shark}`.
+- Evaluate all 6 permutations of those same 3 constraints.
+- Feasible-set checker confirms each permutation has the same logical set.
 
-**Observed pattern**
+### What to look for
 
-- Greedy decoding can flip by permutation.
-- Sampling (`n=40` per permutation) shows large shifts in `P(salmon)` across permutations.
-- In the reference run, range `max(P(salmon)) - min(P(salmon)) = 0.50 (max 1.00, min 0.50)`.
+1. greedy outputs can flip across permutations.
+2. in sampling mode, `P(salmon)` varies by permutation.
+3. effect size is measured as `max(P(salmon)) - min(P(salmon))`.
 
-# Takeaways
+This isolates order effects from pure logical content.
 
-- LLM secret declarations are reconstructed from transcript state.
-- Transcript constraint aggregation is path-dependent (order-sensitive), not purely order-invariant logical conjunction.
+## Reproducible Setup (GH200 / CUDA Recommended)
 
-## Reproducible Setup (>= 80GB Recommended)
-
-### Fast path (recommended)
+### Recommended path
 
 ```bash
 bash scripts/setup_tc70_env.sh
 ```
 
-This creates `~/venvs/tc70`, installs pinned versions, and registers kernel `Python (tc70-70b)`.
+What this script does:
+
+1. creates `~/venvs/tc70`
+2. installs pinned CUDA/Python dependencies
+3. registers kernel `Python (tc70-70b)`
+4. prints a version sanity check
 
 ### Manual fallback
 
@@ -96,21 +112,42 @@ source ~/venvs/tc70/bin/activate
 jupyter lab --no-browser --port 8888
 ```
 
-In Jupyter, pick kernel **`Python (tc70-70b)`**.
+In Jupyter, select kernel **`Python (tc70-70b)`**.
 
-## Run Order in Notebook
+## Notebook Run Order
 
-1. Run setup + imports + secret definitions.
-2. Run **`## 7a. CUDA Sanity Check`** (must pass).
-3. Run **`## 7. Model Loading`**.
-4. Run **`## 8. Inference Function`**.
-5. For ordering study, run **`## 13. Transcript Ordering Effect Study`** section cells.
+For a full run:
 
-Outputs are written under `transcript_ordering_results/` (including `runs.csv` and `config.json`).
+1. setup/import cells
+2. secret and question definitions
+3. transcript + prompt + feasibility functions
+4. `## 7a. CUDA Sanity Check`
+5. `## 7. Model Loading`
+6. `## 8. Inference Function`
+7. run either:
+   - legacy baseline sections (`## 9` to `## 12`)
+   - ordering study section (`## 13` onward)
+
+Outputs are written under `transcript_ordering_results/` (for example `runs.csv` and `config.json`).
+
+## GitHub Pages
+
+Pages is already wired with:
+
+- [`.github/workflows/pages.yml`](.github/workflows/pages.yml)
+- [`index.html`](index.html)
+- [`.nojekyll`](.nojekyll)
+
+One-time repo setting:
+
+1. open **Settings -> Pages**
+2. set **Source** to **GitHub Actions**
+
+After push to `main`, deployment runs automatically.
 
 ## Troubleshooting
 
-If GPU memory appears stuck after a failed load:
+If GPU memory gets stuck after failed model load:
 
 ```bash
 sudo nvidia-smi -pm 0
@@ -120,3 +157,8 @@ sudo systemctl start nvidia-persistenced
 sudo nvidia-smi -pm 1
 nvidia-smi
 ```
+
+## Practical Takeaways
+
+- Secret declarations are reconstructed from visible transcript state.
+- Constraint aggregation is path-dependent: order can change outputs even when logical feasible set is unchanged.
