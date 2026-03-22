@@ -217,6 +217,13 @@ data/live_experiment_config_*.json
 data/sanity_checks_*.json
 data/secrets_v1.json
 
+# Local experiment artifacts
+artifacts/**
+!artifacts/
+!artifacts/README.md
+!artifacts/**/
+!artifacts/**/.gitkeep
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
