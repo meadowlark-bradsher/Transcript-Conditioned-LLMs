@@ -42,7 +42,7 @@ verbatim and write outputs to `artifacts/run_outputs/`, so `LT01`/`LT02` stay un
 | Study ID | Status | Script | Scope | Notes |
 |---|---|---|---|---|
 | `J01` | pilot run (jev-1.14.0, 2026-10-25) | [scripts/jev_experiment.py](../scripts/jev_experiment.py) | `LT01` on TypeSafe Jev: Choice-question distribution over secrets per transcript, plus the contradictory transcript | Reads P(secret) directly; no free-text parsing |
-| `J02` | pilot run (jev-1.14.0, 2026-10-25) | [scripts/jev_experiment.py](../scripts/jev_experiment.py) | `LT02` on Jev: P(salmon \| {salmon, shark}) across 6 permutations × 2 candidate-list orders | Repeated identical calls measure the API's nondeterminism floor |
+| `J02` | 20-rep run (jev-1.14.0, 2026-10-25) | [scripts/jev_experiment.py](../scripts/jev_experiment.py), [analysis/jev_j02_stats.py](../analysis/jev_j02_stats.py) | `LT02` on Jev: P(salmon \| {salmon, shark}) across 6 permutations × 2 candidate-list orders | Order effect is real but small (max−min 0.07 / 0.14 vs noise SD 0.025) and does not replicate across list orders: the perm × list interaction dominates |
 
 ### Lower-priority archived branch
 

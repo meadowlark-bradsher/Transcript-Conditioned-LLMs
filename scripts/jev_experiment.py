@@ -13,6 +13,7 @@ Usage:
   export TYPESAFE_API_KEY=...
   python3 scripts/jev_experiment.py            # run both studies
   python3 scripts/jev_experiment.py --dry-run  # build + validate requests only
+  python3 scripts/jev_experiment.py --studies J02 --reps 20
 
 Outputs go to artifacts/run_outputs/jev/<timestamp>/ (see artifacts/README.md).
 No third-party dependencies: the documented REST endpoint is called with urllib.
@@ -218,11 +219,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model", default="jev-latest")
     ap.add_argument("--reps", type=int, default=3, help="identical repeat calls per cell (checks determinism)")
+    ap.add_argument("--studies", nargs="+", choices=["J01", "J02"], default=["J01", "J02"])
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
 
-    plan = plan_requests(args.reps)
+    plan = [p for p in plan_requests(args.reps) if p["study"] in args.studies]
     n_j01 = sum(p["study"] == "J01" for p in plan)
     print(f"Planned {len(plan)} requests ({n_j01} J01, {len(plan) - n_j01} J02), model={args.model}")
 
@@ -241,7 +243,7 @@ def main() -> int:
     out_dir = args.out or REPO_ROOT / "artifacts" / "run_outputs" / "jev" / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "config.json").write_text(json.dumps({
-        "model_requested": args.model, "reps": args.reps, "api_url": API_URL,
+        "model_requested": args.model, "reps": args.reps, "studies": args.studies, "api_url": API_URL,
         "secrets": SECRETS, "questions": QUESTIONS, "experiment_animals": EXPERIMENT_ANIMALS,
         "target_pair": TARGET_PAIR, "qa_triplet": QA_TRIPLET, "contradictory": CONTRADICTORY,
         "question_spec_example": build_questions(EXPERIMENT_ANIMALS),
