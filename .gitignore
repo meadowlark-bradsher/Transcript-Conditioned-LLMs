@@ -201,6 +201,29 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Local IDE state
+.idea/
+
+# Generated notebooks
+notebooks/*-executed.ipynb
+transcript_conditioning_demo-executed.ipynb
+
+# Generated experiment outputs
+output/
+results/executed_notebooks/
+data/*.parquet
+data/run_specs_*.json
+data/live_experiment_config_*.json
+data/sanity_checks_*.json
+data/secrets_v1.json
+
+# Local experiment artifacts
+artifacts/**
+!artifacts/
+!artifacts/README.md
+!artifacts/**/
+!artifacts/**/.gitkeep
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
