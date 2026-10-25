@@ -34,6 +34,16 @@ These are the notebooks most relevant to the current multiple-choice pivot.
 | `S03` | active | [notebooks/03_intervention_detection.ipynb](/Users/meadowlarkbradsher/workspace/repos/genai/blog/transcript-conditioned-llm-demo/notebooks/03_intervention_detection.ipynb) | Threshold-based intervention detection | Candidate detector logic for pivot |
 | `S04` | active | [notebooks/04b_failure_regime_pilot.ipynb](/Users/meadowlarkbradsher/workspace/repos/genai/blog/transcript-conditioned-llm-demo/notebooks/04b_failure_regime_pilot.ipynb) | Compact pilot grid for usable failure regimes | Post-processing study ID chosen so notebook `04b` becomes Study 4 |
 
+### Cross-model replications
+
+Ports of the legacy studies to other models. They reuse the legacy toy domain
+verbatim and write outputs to `artifacts/run_outputs/`, so `LT01`/`LT02` stay untouched.
+
+| Study ID | Status | Script | Scope | Notes |
+|---|---|---|---|---|
+| `J01` | pilot run (jev-1.14.0, 2026-10-25) | [scripts/jev_experiment.py](../scripts/jev_experiment.py) | `LT01` on TypeSafe Jev: Choice-question distribution over secrets per transcript, plus the contradictory transcript | Reads P(secret) directly; no free-text parsing |
+| `J02` | pilot run (jev-1.14.0, 2026-10-25) | [scripts/jev_experiment.py](../scripts/jev_experiment.py) | `LT02` on Jev: P(salmon \| {salmon, shark}) across 6 permutations × 2 candidate-list orders | Repeated identical calls measure the API's nondeterminism floor |
+
 ### Lower-priority archived branch
 
 These notebooks are still useful reference material, but they are lower priority
